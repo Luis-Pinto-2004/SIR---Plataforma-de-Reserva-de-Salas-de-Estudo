@@ -1,1 +1,0 @@
-# SIR---Plataforma-de-Reserva-de-Salas-de-Estudo
