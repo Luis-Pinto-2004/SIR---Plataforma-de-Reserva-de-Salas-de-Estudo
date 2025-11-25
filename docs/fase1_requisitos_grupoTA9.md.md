@@ -3,14 +3,14 @@
 ## 1. Identificação do Projeto
 **Nome provisório da aplicação:** StudySpace  
 **Tema:** Reserva de Salas de Estudo e Equipamentos  
-**Membros do grupo:** * Luís Pinto(29367) - Ivo Ramoa (29447)*  
+**Membros do grupo:** * Luís Pinto (29367) - Ivo Ramoa (29447)*  
 **Curso / Turma:** Engenharia Informática – ESTG  
 **Data:** Novembro 2025
 
 ---
 
 ## 2. Contexto e Motivação
-A nossa comunidade académica enfrenta atualmente dificuldades na reserva organizada de salas de estudo e equipamentos institucionais. O processo é fragmentado, depende de comunicação informal ou deslocações físicas ao serviço responsável, sem existir um controlo de reservas o que resulta em tempos de espera e deslocações até ao local desnecessários.
+A nossa comunidade académica enfrenta atualmente dificuldades na reserva organizada de salas de estudo e equipamentos institucionais. O processo é fragmentado, depende de comunicação informal ou deslocações físicas ao serviço responsável, sem existir um controlo de reservas o que resulta em tempos de espera e deslocações até ao local desnecessária.
 
 A ausência de um sistema digital compromete a eficiência e a autonomia dos utilizadores, especialmente em períodos de maior afluência (épocas de avaliações, trabalhos de grupo e projetos práticos). O resultado é a utilização ineficiente dos recursos da instituição.
 
