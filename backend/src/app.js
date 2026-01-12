@@ -13,6 +13,8 @@ const { notFound, errorHandler } = require('./middleware/error');
 
 function createApp({ io, enableCors }) {
   const app = express();
+  app.set('trust proxy', 1);
+
 
   app.set('trust proxy', 1);
 
