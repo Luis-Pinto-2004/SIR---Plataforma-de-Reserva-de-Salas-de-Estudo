@@ -1,4 +1,11 @@
-const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
+function withBase(path) {
+  if (!API_BASE) return path;
+  if (path.startsWith('http')) return path;
+  return API_BASE + (path.startsWith('/') ? path : `/${path}`);
+}
+
 
 function buildUrl(path) {
   // Se já vier absoluto, não mexe
