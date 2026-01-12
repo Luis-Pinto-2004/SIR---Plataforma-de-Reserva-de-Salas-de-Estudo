@@ -1,4 +1,4 @@
-# StudySpace (MVP) — TA9
+# StudySpace — TA9
 
 O **StudySpace** é uma aplicação web para **gestão de disponibilidade e reservas** de **salas** e **equipamentos**, com **atualização automática** e **painel de administração**.
 
