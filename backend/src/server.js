@@ -1,37 +1,36 @@
 const http = require("http");
 const { Server } = require("socket.io");
-
+const { createApp } = require("./app");
 const { env } = require("./config/env");
 const { connectToDb } = require("./config/db");
-const { createApp } = require("./app");
 
-const port = process.env.PORT || env.port || 3000;
-
-async function bootstrap() {
+async function main() {
   await connectToDb(env.mongoUri);
 
-  // Criar servidor HTTP primeiro (Socket.IO liga-se a este servidor)
   const httpServer = http.createServer();
 
+  // Socket.io
   const io = new Server(httpServer, {
-    cors: {
-      origin: env.clientOrigin,
-      credentials: true,
-    },
+    cors: { origin: env.clientOrigin, credentials: true },
+    path: "/socket.io",
   });
 
   // Express app
-  const app = createApp({ io, enableCors: true });
+  const app = createApp({ io, enableCors: env.enableCors });
 
-  // Ligar Express ao servidor HTTP
-  httpServer.on("request", app);
+  // MUITO IMPORTANTE:
+  // não deixar o Express responder a /socket.io (senão dá 404 e rebenta com ERR_HTTP_HEADERS_SENT)
+  httpServer.on("request", (req, res) => {
+    if (req.url && req.url.startsWith("/socket.io")) return;
+    return app(req, res);
+  });
 
-  httpServer.listen(port, () => {
-    console.log(`[API] listening on :${port} (env=${env.nodeEnv})`);
+  httpServer.listen(env.port, () => {
+    console.log(`[API] listening on :${env.port} (env=${env.nodeEnv})`);
   });
 }
 
-bootstrap().catch((err) => {
-  console.error("[BOOT] failed", err);
+main().catch((err) => {
+  console.error("[API] fatal startup error:", err);
   process.exit(1);
 });
