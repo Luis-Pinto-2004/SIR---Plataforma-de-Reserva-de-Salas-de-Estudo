@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySpace – My History</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>StudySpace</h1>
+  </header>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">My History</a>
+    <a href="#" id="adminLink" style="display:none;">Admin</a>
+    <a href="#" id="logoutLink">Logout</a>
+  </nav>
+  <div class="container">
+    <h2>My Bookings</h2>
+    <table id="historyTable">
+      <thead><tr><th>ID</th><th>Resource</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script type="module" src="scripts/history.js"></script>
+</body>
+</html>

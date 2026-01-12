@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "passwordHash": "a62d782e8fdf8abf2c6116d158828669:6b545d93b20e227390b97c455db6a05f65762a073cd56adea0a903471c8aeb05a171b9af66b12c43f80ba426a65e1d164aa5073c911f5f86b001fffbdcee9c35",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "name": "Teacher User",
+    "email": "teacher@example.com",
+    "passwordHash": "358abe7102d2373c9259eeeaa5be120a:13cbcf300ab022aa9d778a8704d63f17b21b19bbd645ebf91c35568c2c864749152d012335b91e412dac97a1cb8ee602b146605df01699c0926a3ddc587d427f",
+    "role": "teacher"
+  },
+  {
+    "id": 3,
+    "name": "Student User",
+    "email": "student@example.com",
+    "passwordHash": "94f4cae2992ee9180a43c1f20f852e0e:2a5878dd296d76f55d9fa5122d7805e3db16ae9ac8ccaedf831183cfcc278ed83471fd8921fed57df58cdcb61c27e9a5e67599619aeb83f957f85894de491991",
+    "role": "student"
+  },
+  {
+    "id": 4,
+    "name": "luis",
+    "email": "luis@a.a",
+    "passwordHash": "2680327e4018c2c1c8b50bb87f9edd64:23a5fdca9eff124db532fc1ba8a70b71cf2126af84aa4632cc63fa082ab0d61b4706f2271e8f549b8b8b4554495899025d21460dc7355f12fbfa272475509834",
+    "role": "student"
+  },
+  {
+    "id": 5,
+    "name": "teste",
+    "email": "teste@teste.teste",
+    "passwordHash": "8483caa47cf8f4735264597dde1e0d1c:808cf51286697c33ea1237fc2f7b10b1644d06c443ef3fa670415a5b82d31c21d50dfd567c423e48844339b881031692c14476ee4898c7bb1711f31d9e59bcb6",
+    "role": "teacher"
+  },
+  {
+    "id": 6,
+    "name": "teste1",
+    "email": "teste1@teste1.teste1",
+    "passwordHash": "79082db53e9eaea575a7aa6e78e89e4e:5e9c4f603bbe05d752d1c0ebbdc46cfb3948fa842908bca496b3f4c51abf1d6b0696a706d7909f7d4a2fefe389f5282e94d640f45b5c618be05477915df0e91e",
+    "role": "student"
+  }
+]

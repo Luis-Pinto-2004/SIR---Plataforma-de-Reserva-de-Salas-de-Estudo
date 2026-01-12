@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Room 1",
+    "capacity": 5,
+    "location": "Building A1",
+    "status": "available"
+  },
+  {
+    "id": 2,
+    "name": "Room 2",
+    "capacity": 6,
+    "location": "Building A2",
+    "status": "available"
+  },
+  {
+    "id": 3,
+    "name": "Room 3",
+    "capacity": 7,
+    "location": "Building A3",
+    "status": "available"
+  },
+  {
+    "id": 4,
+    "name": "Room 4",
+    "capacity": 8,
+    "location": "Building A4",
+    "status": "available"
+  },
+  {
+    "id": 5,
+    "name": "Room 5",
+    "capacity": 9,
+    "location": "Building A5",
+    "status": "available"
+  },
+  {
+    "id": 6,
+    "name": "treste",
+    "capacity": 1,
+    "location": "Auditorio",
+    "status": "available"
+  }
+]

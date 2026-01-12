@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Equipment 1",
+    "category": "Laptop",
+    "status": "available"
+  },
+  {
+    "id": 2,
+    "name": "Equipment 2",
+    "category": "Projector",
+    "status": "available"
+  },
+  {
+    "id": 3,
+    "name": "Equipment 3",
+    "category": "Laptop",
+    "status": "available"
+  },
+  {
+    "id": 4,
+    "name": "Equipment 4",
+    "category": "Projector",
+    "status": "available"
+  },
+  {
+    "id": 5,
+    "name": "Equipment 5",
+    "category": "Laptop",
+    "status": "available"
+  }
+]

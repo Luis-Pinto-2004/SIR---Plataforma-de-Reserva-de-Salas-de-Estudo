@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "userId": 3,
+    "resourceType": "room",
+    "resourceId": 1,
+    "dataInicio": "2026-01-10T01:13:04.180Z",
+    "dataFim": "2026-01-10T02:13:04.180Z",
+    "status": "cancelled"
+  },
+  {
+    "id": 2,
+    "userId": 3,
+    "resourceType": "equipment",
+    "resourceId": 2,
+    "dataInicio": "2026-01-10T03:13:04.180Z",
+    "dataFim": "2026-01-10T04:13:04.180Z",
+    "status": "cancelled"
+  },
+  {
+    "id": 3,
+    "userId": 2,
+    "resourceType": "room",
+    "resourceId": 3,
+    "dataInicio": "2026-01-10T05:13:04.180Z",
+    "dataFim": "2026-01-10T06:13:04.180Z",
+    "status": "cancelled"
+  },
+  {
+    "id": 4,
+    "userId": 3,
+    "resourceType": "room",
+    "resourceId": 1,
+    "dataInicio": "2026-01-12T00:36",
+    "dataFim": "2026-01-14T00:36",
+    "status": "cancelled"
+  },
+  {
+    "id": 5,
+    "userId": 2,
+    "resourceType": "equipment",
+    "resourceId": 2,
+    "dataInicio": "2026-01-13T00:37",
+    "dataFim": "2026-01-22T00:37",
+    "status": "cancelled"
+  },
+  {
+    "id": 6,
+    "userId": 1,
+    "resourceType": "room",
+    "resourceId": 1,
+    "dataInicio": "2026-01-10T00:39",
+    "dataFim": "2026-01-30T00:39",
+    "status": "cancelled"
+  },
+  {
+    "id": 7,
+    "userId": 4,
+    "resourceType": "room",
+    "resourceId": 1,
+    "dataInicio": "2026-01-30T00:51",
+    "dataFim": "2026-02-06T00:51",
+    "status": "confirmed"
+  },
+  {
+    "id": 8,
+    "userId": 1,
+    "resourceType": "equipment",
+    "resourceId": 2,
+    "dataInicio": "2026-01-15T18:06",
+    "dataFim": "2026-01-21T18:06",
+    "status": "confirmed"
+  },
+  {
+    "id": 9,
+    "userId": 5,
+    "resourceType": "equipment",
+    "resourceId": 1,
+    "dataInicio": "2026-01-15T18:08",
+    "dataFim": "2026-01-30T18:08",
+    "status": "confirmed"
+  },
+  {
+    "id": 10,
+    "userId": 1,
+    "resourceType": "equipment",
+    "resourceId": 1,
+    "dataInicio": "2026-02-20T18:18",
+    "dataFim": "2026-03-05T18:18",
+    "status": "confirmed"
+  },
+  {
+    "id": 11,
+    "userId": 2,
+    "resourceType": "equipment",
+    "resourceId": 2,
+    "dataInicio": "2026-01-10T18:19",
+    "dataFim": "2026-01-12T18:19",
+    "status": "confirmed"
+  }
+]

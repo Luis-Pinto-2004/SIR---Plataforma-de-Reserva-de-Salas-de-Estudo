@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySpace – Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>StudySpace – Admin Panel</h1>
+  </header>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">My History</a>
+    <a href="admin.html">Admin</a>
+    <a href="#" id="logoutLink">Logout</a>
+  </nav>
+  <div class="container">
+    <h2>Rooms Management</h2>
+    <form id="addRoomForm">
+      <input type="text" id="roomName" placeholder="Name" required />
+      <input type="number" id="roomCapacity" placeholder="Capacity" required />
+      <input type="text" id="roomLocation" placeholder="Location" required />
+      <select id="roomStatus">
+        <option value="available">Available</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="unavailable">Unavailable</option>
+      </select>
+      <button type="submit">Add Room</button>
+    </form>
+    <table id="adminRoomsTable">
+      <thead><tr><th>Name</th><th>Capacity</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <h2>Equipment Management</h2>
+    <form id="addEquipmentForm">
+      <input type="text" id="equipName" placeholder="Name" required />
+      <input type="text" id="equipCategory" placeholder="Category" required />
+      <select id="equipStatus">
+        <option value="available">Available</option>
+        <option value="maintenance">Maintenance</option>
+        <option value="unavailable">Unavailable</option>
+      </select>
+      <button type="submit">Add Equipment</button>
+    </form>
+    <table id="adminEquipTable">
+      <thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <h2>All Bookings</h2>
+    <table id="adminBookingsTable">
+      <thead><tr><th>ID</th><th>User ID</th><th>Resource</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script type="module" src="scripts/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      # MongoDB Atlas (SRV)
+      # NOTE: If your Atlas cluster requires an IP allowlist, ensure your
+      # current IP is allowed in Atlas, otherwise the backend cannot connect.
+      MONGO_URI: mongodb+srv://luispinto_db_user:StudySpace@studyspace.zngulhk.mongodb.net/studyspace?retryWrites=true&w=majority&appName=StudySpace
+      PORT: 4000
+      NODE_ENV: production
+      JWT_SECRET: dev_secret_change_me
+      JWT_EXPIRES_IN: 7d
+      # Local Docker uses HTTP => COOKIE_SECURE must be false
+      COOKIE_SECURE: "false"
+      COOKIE_SAMESITE: lax
+      CLIENT_ORIGIN: http://localhost:8080
+      RESET_TOKEN_TTL_MINUTES: 60
+      AUTO_SEED: "true"
+    expose:
+      - "4000"
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+

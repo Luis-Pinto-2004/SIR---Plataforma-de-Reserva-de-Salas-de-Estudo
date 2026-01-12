@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySpace – Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>StudySpace</h1>
+  </header>
+  <nav id="mainNav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="history.html">My History</a>
+    <a href="#" id="adminLink" style="display:none;">Admin</a>
+    <a href="#" id="logoutLink">Logout</a>
+  </nav>
+  <div class="container">
+    <h2>Resources</h2>
+    <div>
+      <h3>Rooms</h3>
+      <table id="roomsTable">
+        <thead>
+          <tr><th>Name</th><th>Capacity</th><th>Location</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Equipment</h3>
+      <table id="equipmentTable">
+        <thead>
+          <tr><th>Name</th><th>Category</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="bookingFormContainer" style="display:none; margin-top:2rem;">
+      <h3>Create Booking</h3>
+      <form id="bookingForm">
+        <input type="hidden" id="resourceType" />
+        <input type="hidden" id="resourceId" />
+        <label>Start Time:<br/><input type="datetime-local" id="startTime" required /></label><br/>
+        <label>End Time:<br/><input type="datetime-local" id="endTime" required /></label><br/>
+        <button type="submit">Confirm Booking</button>
+        <button type="button" id="cancelBooking">Cancel</button>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="scripts/dashboard.js"></script>
+</body>
+</html>
