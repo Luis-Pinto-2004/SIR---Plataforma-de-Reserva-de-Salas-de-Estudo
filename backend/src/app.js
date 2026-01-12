@@ -1,47 +1,62 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const morgan = require('morgan');
 const cors = require('cors');
 
 const { env } = require('./config/env');
+
 const { authRouter } = require('./routes/auth');
 const { roomsRouter } = require('./routes/rooms');
 const { equipmentRouter } = require('./routes/equipment');
+const { reservationsRouter } = require('./routes/reservations');
+const { usersRouter } = require('./routes/users');
+const { dashboardRouter } = require('./routes/dashboard');
 const { healthRouter } = require('./routes/health');
 const { notFound, errorHandler } = require('./middleware/error');
 
+function buildCorsOptions() {
+  // CLIENT_ORIGIN pode ser lista separada por vírgulas.
+  // Se estiver vazio (ou '*'), permite qualquer origem (adequado para demo/avaliação).
+  const raw = (env.clientOrigin || '').trim();
+  const allowed = raw
+    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  const allowAll = allowed.length === 0 || allowed.includes('*');
+
+  return {
+    origin(origin, cb) {
+      if (!origin) return cb(null, true); // curl/postman/healthchecks
+      if (allowAll) return cb(null, true);
+      if (allowed.includes(origin)) return cb(null, true);
+      return cb(null, false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  };
+}
+
 function createApp({ io, enableCors }) {
   const app = express();
-  app.set('trust proxy', 1);
 
-
-  app.set('trust proxy', 1);
-
-  app.use(helmet({
-    contentSecurityPolicy: false
-  }));
-  app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
-  app.use(express.json());
-  app.use(cookieParser());
+  app.use(helmet());
 
   if (enableCors) {
-    app.use(
-      cors({
-        origin: env.clientOrigin,
-        credentials: true
-      })
-    );
+    const corsOptions = buildCorsOptions();
+    app.use(cors(corsOptions));
+    app.options('*', cors(corsOptions));
   }
 
-  app.get('/api', (req, res) => res.json({ ok: true, name: 'StudySpace API' }));
+  app.use(express.json());
 
-  app.use('/api', healthRouter);
-  app.use('/api', authRouter);
-  app.use('/api', roomsRouter);
-  app.use('/api', equipmentRouter);
-  const { createBookingsRouter } = require('./routes/bookings');
-  app.use('/api', createBookingsRouter(io));
+  app.use('/api/health', healthRouter);
+
+  app.use('/api/auth', authRouter);
+  app.use('/api/rooms', roomsRouter);
+  app.use('/api/equipment', equipmentRouter);
+  app.use('/api/reservations', reservationsRouter);
+  app.use('/api/users', usersRouter);
+  app.use('/api/dashboard', dashboardRouter(io));
 
   app.use(notFound);
   app.use(errorHandler);
