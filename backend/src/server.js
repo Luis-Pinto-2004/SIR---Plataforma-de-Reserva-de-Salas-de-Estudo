@@ -1,49 +1,37 @@
 const http = require("http");
 const { Server } = require("socket.io");
 
-const env = require("./config/env");
-const createApp = require("./app");
-const connectDb = require("./config/db");
-const { seedDatabase } = require("./seed/seedData");
+const { env } = require("./config/env");
+const { connectToDb } = require("./config/db");
+const { createApp } = require("./app");
 
-// Create HTTP server
-const httpServer = http.createServer();
+const port = process.env.PORT || env.port || 3000;
 
-// Socket.IO server
-const io = new Server(httpServer, {
-  cors: {
-    origin: env.clientOrigin,
-    credentials: true,
-  },
-  path: "/socket.io",
-});
+async function bootstrap() {
+  await connectToDb(env.mongoUri);
 
-// ✅ Controla CORS por variável de ambiente (para Render / cross-site)
-const enableCors = String(process.env.ENABLE_CORS || "false").toLowerCase() === "true";
+  // Criar servidor HTTP primeiro (Socket.IO liga-se a este servidor)
+  const httpServer = http.createServer();
 
-const app = createApp({ io, enableCors });
+  const io = new Server(httpServer, {
+    cors: {
+      origin: env.clientOrigin,
+      credentials: true,
+    },
+  });
 
-// Attach Express app to HTTP server
-httpServer.on("request", app);
+  // Express app
+  const app = createApp({ io, enableCors: true });
 
-async function start() {
-  try {
-    await connectDb(env.mongoUri);
+  // Ligar Express ao servidor HTTP
+  httpServer.on("request", app);
 
-    // Optional seed on startup
-    if (env.autoSeed) {
-      await seedDatabase({ force: false });
-    }
-
-    httpServer.listen(env.port, () => {
-      console.log(`API listening on port ${env.port}`);
-      console.log(`CORS enabled: ${enableCors ? "YES" : "NO"}`);
-      console.log(`CLIENT_ORIGIN: ${env.clientOrigin}`);
-    });
-  } catch (err) {
-    console.error("Failed to start server:", err);
-    process.exit(1);
-  }
+  httpServer.listen(port, () => {
+    console.log(`[API] listening on :${port} (env=${env.nodeEnv})`);
+  });
 }
 
-start();
+bootstrap().catch((err) => {
+  console.error("[BOOT] failed", err);
+  process.exit(1);
+});
