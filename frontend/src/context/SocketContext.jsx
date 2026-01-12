@@ -1,33 +1,36 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { io as createIo } from "socket.io-client";
 
 const SocketContext = createContext(null);
 
+function getBackendURL() {
+  const raw =
+    import.meta.env.VITE_BACKEND_URL ||
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_BASE ||
+    "";
+
+  return raw ? raw.replace(/\/$/, "") : undefined;
+}
+
 export function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null);
 
-  const backendUrl = useMemo(() => {
-    // ✅ Em produção (Render), define VITE_API_BASE e isto liga ao backend remoto
-    // ✅ Em dev, fica vazio e usa a mesma origem (proxy do Vite)
-    return import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_BASE || undefined;
-  }, []);
+  const backendURL = useMemo(() => getBackendURL(), []);
 
   useEffect(() => {
-    const s = createIo(backendUrl, {
-      path: "/socket.io",
+    const s = createIo(backendURL, {
       withCredentials: true,
-      autoConnect: true,
+      transports: ["websocket", "polling"],
     });
 
     setSocket(s);
+    return () => s.disconnect();
+  }, [backendURL]);
 
-    return () => {
-      s.disconnect();
-      setSocket(null);
-    };
-  }, [backendUrl]);
-
-  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+  );
 }
 
 export function useSocket() {

@@ -1,20 +1,14 @@
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-
-function withBase(path) {
-  if (!API_BASE) return path;
-  if (path.startsWith('http')) return path;
-  return API_BASE + (path.startsWith('/') ? path : `/${path}`);
-}
-
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_API_BASE ||
+  import.meta.env.VITE_BACKEND_URL ||
+  ""
+).replace(/\/$/, "");
 
 function buildUrl(path) {
-  // Se já vier absoluto, não mexe
   if (/^https?:\/\//i.test(path)) return path;
-
-  // path esperado: "/api/..."
   if (!API_BASE) return path;
-
-  return `${API_BASE}${path}`;
+  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 export async function apiFetch(path, options = {}) {
