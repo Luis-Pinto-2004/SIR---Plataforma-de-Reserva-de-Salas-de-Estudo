@@ -1,43 +1,49 @@
-const http = require('http');
+const http = require("http");
+const { Server } = require("socket.io");
 
-const { env } = require('./config/env');
-const { connectToDb } = require('./db');
-const { initSocket } = require("./socket");
+const env = require("./config/env");
+const createApp = require("./app");
+const connectDb = require("./config/db");
 const { seedDatabase } = require("./seed/seedData");
-const { createApp } = require('./app');
 
-async function main() {
-  await connectToDb(env.mongoUri);
-  console.log("[DB] connected");
+// Create HTTP server
+const httpServer = http.createServer();
 
-  if (env.autoSeed) {
-    const result = await seedDatabase({ force: false });
-    if (result.skipped) {
-      console.log("[SEED] skipped:", result.reason);
-    } else {
-      console.log("[SEED] created:", result.counts);
+// Socket.IO server
+const io = new Server(httpServer, {
+  cors: {
+    origin: env.clientOrigin,
+    credentials: true,
+  },
+  path: "/socket.io",
+});
+
+// ✅ Controla CORS por variável de ambiente (para Render / cross-site)
+const enableCors = String(process.env.ENABLE_CORS || "false").toLowerCase() === "true";
+
+const app = createApp({ io, enableCors });
+
+// Attach Express app to HTTP server
+httpServer.on("request", app);
+
+async function start() {
+  try {
+    await connectDb(env.mongoUri);
+
+    // Optional seed on startup
+    if (env.autoSeed) {
+      await seedDatabase({ force: false });
     }
+
+    httpServer.listen(env.port, () => {
+      console.log(`API listening on port ${env.port}`);
+      console.log(`CORS enabled: ${enableCors ? "YES" : "NO"}`);
+      console.log(`CLIENT_ORIGIN: ${env.clientOrigin}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
   }
-
-
-  let requestHandler = (req, res) => {
-    res.statusCode = 503;
-    res.end('Starting...');
-  };
-
-  const httpServer = http.createServer((req, res) => requestHandler(req, res));
-  const io = initSocket(httpServer);
-
-  const enableCors = process.env.ENABLE_CORS === 'true';
-  const app = createApp({ io, enableCors });
-  requestHandler = app;
-
-  httpServer.listen(env.port, '0.0.0.0', () => {
-    console.log(`[API] listening on :${env.port} (env=${env.nodeEnv})`);
-  });
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+start();
