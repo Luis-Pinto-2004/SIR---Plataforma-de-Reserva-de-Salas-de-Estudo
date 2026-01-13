@@ -4,20 +4,20 @@ const { connectToDb } = require('./db');
 const { seedDatabase } = require('./seed/seedData');
 const { initSocket } = require('./socket');
 
-// “Blindado”: aceita tanto module.exports = { createApp } como module.exports = createApp
+// aceita tanto module.exports = { createApp } como module.exports = createApp
 const appModule = require('./app');
 const createApp = typeof appModule === 'function' ? appModule : appModule.createApp;
 
 async function start() {
   await connectToDb(env.mongoUri);
 
-  // Seed só se quiseres (ou deixa como está)
-  await seedDatabase();
+  if (env.autoSeed) {
+    await seedDatabase();
+  }
 
-  // Por defeito: CORS LIGADO (desliga apenas se ENABLE_CORS=false)
-  const enableCors = process.env.ENABLE_CORS
-    ? process.env.ENABLE_CORS === 'true'
-    : true;
+  // Em modo “1 único Web Service” (frontend+API no mesmo domínio), CORS deve estar DESLIGADO.
+  // Só liga se tiveres mesmo múltiplas origens.
+  const enableCors = String(process.env.ENABLE_CORS || '').toLowerCase() === 'true';
 
   // handler temporário enquanto o express não está pronto
   let requestHandler = (req, res) => {

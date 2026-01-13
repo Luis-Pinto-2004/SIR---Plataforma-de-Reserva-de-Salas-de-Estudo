@@ -3,6 +3,15 @@ import { apiFetch } from '../api/client';
 
 const AuthContext = createContext(null);
 
+function setFallbackToken(token) {
+  try {
+    if (token) localStorage.setItem('studyspace_token', token);
+    else localStorage.removeItem('studyspace_token');
+  } catch {
+    // ignore
+  }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,32 +32,35 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(email, password) {
-    const { user } = await apiFetch('/api/auth/login', {
+    const { user, token } = await apiFetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
+    setFallbackToken(token);
     setUser(user);
     return user;
   }
 
   async function register(name, email, password) {
-    const { user } = await apiFetch('/api/auth/register', {
+    const { user, token } = await apiFetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password })
     });
+    setFallbackToken(token);
     setUser(user);
     return user;
   }
 
   async function logout() {
-    await apiFetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
+    try {
+      await apiFetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      setFallbackToken(null);
+      setUser(null);
+    }
   }
 
-  const value = useMemo(
-    () => ({ user, loading, login, register, logout, reload: loadMe }),
-    [user, loading]
-  );
+  const value = useMemo(() => ({ user, loading, login, register, logout, reload: loadMe }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,69 +1,67 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
-export function SocketProvider({ children }) {
-  const socketRef = useRef(null);
-  const [connected, setConnected] = useState(false);
-  const [lastError, setLastError] = useState(null);
+function getFallbackToken() {
+  try {
+    return localStorage.getItem('studyspace_token');
+  } catch {
+    return null;
+  }
+}
 
-  const socketUrl = import.meta.env.VITE_SOCKET_URL; // ex: https://<backend>.onrender.com
+export function SocketProvider({ children }) {
+  const { user, loading } = useAuth();
+  const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    if (!socketUrl) {
-      setLastError('VITE_SOCKET_URL em falta');
+    // Só liga sockets quando o utilizador está autenticado.
+    if (loading) return;
+    if (!user) {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+        setSocket(null);
+      }
       return;
     }
 
-    const socket = io(socketUrl, {
+    const socketUrlRaw = (import.meta.env.VITE_SOCKET_URL || '').trim();
+    const socketUrl = socketUrlRaw.length ? socketUrlRaw : undefined; // undefined => same-origin
+
+    const token = getFallbackToken();
+
+    const s = io(socketUrl, {
       path: '/socket.io',
-      withCredentials: true,
       transports: ['websocket', 'polling'],
-      autoConnect: true,
+      withCredentials: true,
+      auth: token ? { token } : undefined,
       reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 500,
-      timeout: 10000,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 800,
+      timeout: 15000
     });
 
-    socketRef.current = socket;
-
-    socket.on('connect', () => {
-      setConnected(true);
-      setLastError(null);
-    });
-
-    socket.on('disconnect', () => {
-      setConnected(false);
-    });
-
-    socket.on('connect_error', (err) => {
-      setLastError(err?.message || 'connect_error');
-    });
-
-    socket.on('error', (err) => {
-      setLastError(err?.message || 'socket_error');
-    });
+    socketRef.current = s;
+    setSocket(s);
 
     return () => {
-      socket.removeAllListeners();
-      socket.disconnect();
+      s.disconnect();
       socketRef.current = null;
+      setSocket(null);
     };
-  }, [socketUrl]);
+  }, [user, loading]);
 
-  const value = useMemo(() => ({
-    socket: socketRef.current,
-    connected,
-    lastError,
-  }), [connected, lastError]);
+  const value = useMemo(() => ({ socket }), [socket]);
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 }
 
 export function useSocket() {
   const ctx = useContext(SocketContext);
-  if (!ctx) throw new Error('useSocket tem de ser usado dentro de <SocketProvider>');
+  if (!ctx) throw new Error('useSocket must be used within SocketProvider');
   return ctx;
 }

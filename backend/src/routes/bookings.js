@@ -160,7 +160,7 @@ function createBookingsRouter(io) {
       });
 
       const dto = bookingDto(booking);
-      io.emit('booking:created', dto);
+      req.io?.emit('booking:created', dto);
       return res.status(201).json({ booking: dto });
     })
   );
@@ -245,9 +245,9 @@ function createBookingsRouter(io) {
       const dto = bookingDto(existing);
 
       if (existing.status === 'cancelled') {
-        io.emit('booking:cancelled', dto);
+        req.io?.emit('booking:cancelled', dto);
       } else {
-        io.emit('booking:updated', dto);
+        req.io?.emit('booking:updated', dto);
       }
 
       return res.json({ booking: dto });
@@ -271,7 +271,7 @@ function createBookingsRouter(io) {
       if (existing.status !== 'cancelled') {
         existing.status = 'cancelled';
         await existing.save();
-        io.emit('booking:cancelled', bookingDto(existing));
+        req.io?.emit('booking:cancelled', bookingDto(existing));
       }
 
       return res.json({ ok: true });
