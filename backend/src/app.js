@@ -10,8 +10,10 @@ const { env } = require('./config/env');
 
 const healthRouter = require('./routes/health');
 const authRouter = require('./routes/auth');
-const resourcesRouter = require('./routes/resources');
-const bookingsRouter = require('./routes/bookings');
+const usersRouter = require('./routes/users');
+const { roomsRouter } = require('./routes/rooms');
+const { equipmentRouter } = require('./routes/equipment');
+const { createBookingsRouter } = require('./routes/bookings');
 
 function createApp({ io, enableCors = false } = {}) {
   const app = express();
@@ -55,8 +57,11 @@ function createApp({ io, enableCors = false } = {}) {
   // API
   app.use('/api', healthRouter);
   app.use('/api', authRouter);
-  app.use('/api/resources', resourcesRouter);
-  app.use('/api/bookings', bookingsRouter);
+  // Endpoints usados pelo frontend
+  app.use('/api/users', usersRouter);
+  app.use('/api', roomsRouter);
+  app.use('/api', equipmentRouter);
+  app.use('/api', createBookingsRouter({ io }));
 
   // Frontend (Vite build) servido pelo backend
   const publicDir = path.join(__dirname, '..', 'public');
