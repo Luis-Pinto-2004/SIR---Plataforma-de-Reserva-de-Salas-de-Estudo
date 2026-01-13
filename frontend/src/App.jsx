@@ -2,8 +2,7 @@ import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { SocketProvider } from './context/SocketContext';
+import { useAuth } from './context/AuthContext';
 
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -26,10 +25,9 @@ function PublicOnly({ children }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <SocketProvider>
-        <Toaster position="top-right" />
-        <Routes>
+    <>
+      <Toaster position="top-right" />
+      <Routes>
           <Route
             path="/login"
             element={
@@ -79,8 +77,7 @@ export default function App() {
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </SocketProvider>
-    </AuthProvider>
+      </Routes>
+    </>
   );
 }
