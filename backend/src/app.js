@@ -28,6 +28,8 @@ function buildCorsOptions() {
 }
 
 function createApp({ io, enableCors }) {
+  app.set('trust proxy', 1);
+
   const app = express();
 
   if (enableCors) {

@@ -22,9 +22,7 @@ const authLimiter = rateLimit({
 function setAuthCookie(res, token) {
   res.cookie(env.cookie.name, token, {
     httpOnly: true,
-    sameSite: env.cookie.sameSite,
-    secure: env.cookie.secure,
-    maxAge: env.cookie.maxAgeMs,
+    secure: true,
     path: '/'
   });
 }
