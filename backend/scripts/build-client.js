@@ -33,8 +33,11 @@ function main() {
   }
 
   // Instalar deps do frontend e construir
-  run('npm ci', { cwd: frontendDir });
-  run('npm run build', { cwd: frontendDir });
+  // Nota: em ambientes como o Render, NODE_ENV=production pode fazer o npm omitir devDependencies.
+  // O Vite vive em devDependencies, portanto forçamos instalação/build em modo "development".
+  const buildEnv = { ...process.env, NODE_ENV: 'development', NPM_CONFIG_PRODUCTION: 'false' };
+  run('npm ci', { cwd: frontendDir, env: buildEnv });
+  run('npm run build', { cwd: frontendDir, env: buildEnv });
 
   // Copiar dist para backend/public
   const distDir = path.join(frontendDir, 'dist');
