@@ -1,7 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 
-const User = require('../models/User');
+const { User } = require('../models/User');
+
 const { signJwt, verifyJwt } = require('../utils/jwt');
 const { env } = require('../config/env');
 
