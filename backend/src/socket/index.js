@@ -4,12 +4,26 @@ const { verifyJwt } = require('../utils/jwt');
 const { env } = require('../config/env');
 
 function initSocket(httpServer) {
+  const raw = (env.clientOrigin || '').trim();
+  const allowed = raw
+    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
+    : [];
+
+  const allowAll = allowed.length === 0 || allowed.includes('*');
+
+  const corsOrigin = (origin, cb) => {
+    if (!origin) return cb(null, true); // SSR/healthchecks
+    if (allowAll) return cb(null, true);
+    if (allowed.includes(origin)) return cb(null, true);
+    return cb(new Error('Not allowed by CORS'), false);
+  };
+
   const io = new Server(httpServer, {
     path: '/socket.io',
     cors: {
-      origin: env.clientOrigin,
-      credentials: true
-    }
+      origin: corsOrigin,
+      credentials: true,
+    },
   });
 
   io.use((socket, next) => {
@@ -18,8 +32,14 @@ function initSocket(httpServer) {
       const parsed = cookie.parse(header);
       const token = parsed[env.cookie.name];
       if (!token) return next(new Error('unauthorized'));
+
       const payload = verifyJwt(token, env.jwtSecret);
-      socket.user = { id: payload.id, role: payload.role, email: payload.email, name: payload.name };
+      socket.user = {
+        id: payload.id,
+        role: payload.role,
+        email: payload.email,
+        name: payload.name,
+      };
       return next();
     } catch (err) {
       return next(new Error('unauthorized'));
@@ -27,9 +47,7 @@ function initSocket(httpServer) {
   });
 
   io.on('connection', (socket) => {
-    if (socket.user?.role === 'admin') {
-      socket.join('admin');
-    }
+    if (socket.user?.role === 'admin') socket.join('admin');
     socket.emit('connected', { ok: true, user: socket.user });
   });
 

@@ -1,52 +1,66 @@
-const { Server } = require('socket.io');
-const cookie = require('cookie');
-const { verifyJwt } = require('../utils/jwt');
-const { env } = require('../config/env');
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { io as createIo } from "socket.io-client";
 
-function initSocket(httpServer) {
-  const raw = (env.clientOrigin || '').trim();
-  const allowed = raw
-    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
-    : [];
+const SocketContext = createContext(null);
 
-  const allowAll = allowed.length === 0 || allowed.includes('*');
-  const corsOrigin = (origin, cb) => {
-    if (!origin) return cb(null, true);
-    if (allowAll) return cb(null, true);
-    if (allowed.includes(origin)) return cb(null, true);
-    return cb(null, false);
-  };
+export function SocketProvider({ children }) {
+  const socketRef = useRef(null);
+  const [connected, setConnected] = useState(false);
+  const [serverUser, setServerUser] = useState(null);
 
-  const io = new Server(httpServer, {
-    path: '/socket.io',
-    cors: {
-      origin: corsOrigin,
-      credentials: true
-    }
-  });
+  const SOCKET_URL = useMemo(() => {
+    const fromEnv = (import.meta.env.VITE_SOCKET_URL || "").trim();
+    if (fromEnv) return fromEnv.replace(/\/$/, "");
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || "").trim();
+    return apiBase ? apiBase.replace(/\/$/, "") : "";
+  }, []);
 
-  io.use((socket, next) => {
-    try {
-      const header = socket.request.headers.cookie || '';
-      const parsed = cookie.parse(header);
-      const token = parsed[env.cookie.name];
-      if (!token) return next(new Error('unauthorized'));
-      const payload = verifyJwt(token, env.jwtSecret);
-      socket.user = { id: payload.id, role: payload.role, email: payload.email, name: payload.name };
-      return next();
-    } catch (err) {
-      return next(new Error('unauthorized'));
-    }
-  });
+  useEffect(() => {
+    // Se não houver URL, tenta same-origin (funciona em dev com proxy, mas em Render quase nunca é o que queres)
+    const url = SOCKET_URL || undefined;
 
-  io.on('connection', (socket) => {
-    if (socket.user?.role === 'admin') {
-      socket.join('admin');
-    }
-    socket.emit('connected', { ok: true, user: socket.user });
-  });
+    const s = createIo(url, {
+      path: "/socket.io",
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 20,
+      reconnectionDelay: 600,
+      reconnectionDelayMax: 4000,
+      timeout: 10000,
+    });
 
-  return io;
+    socketRef.current = s;
+
+    s.on("connect", () => setConnected(true));
+    s.on("disconnect", () => setConnected(false));
+    s.on("connected", (payload) => {
+      setServerUser(payload?.user || null);
+    });
+
+    return () => {
+      try {
+        s.removeAllListeners();
+        s.disconnect();
+      } catch (_) {}
+      socketRef.current = null;
+    };
+  }, [SOCKET_URL]);
+
+  const value = useMemo(
+    () => ({
+      socket: socketRef.current,
+      connected,
+      serverUser,
+    }),
+    [connected, serverUser]
+  );
+
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 }
 
-module.exports = { initSocket };
+export function useSocket() {
+  const ctx = useContext(SocketContext);
+  if (!ctx) throw new Error("useSocket must be used within SocketProvider");
+  return ctx;
+}
