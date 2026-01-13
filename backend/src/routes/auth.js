@@ -39,11 +39,15 @@ router.post('/auth/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+	    // O modelo usa `passwordHash` e valida `role` (admin | teacher | student)
+	    const allowedRoles = new Set(['admin', 'teacher', 'student']);
+	    const safeRole = allowedRoles.has(role) ? role : 'student';
+
+	    const newUser = new User({
       name,
       email,
-      password: hashedPassword,
-      role: role || 'user',
+	      passwordHash: hashedPassword,
+	      role: safeRole,
     });
 
     await newUser.save();
@@ -71,12 +75,13 @@ router.post('/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Missing email or password' });
     }
 
-    const user = await User.findOne({ email });
+	    // `passwordHash` tem select:false no schema, por isso tem de ser pedido explicitamente
+	    const user = await User.findOne({ email }).select('+passwordHash');
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+	    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
