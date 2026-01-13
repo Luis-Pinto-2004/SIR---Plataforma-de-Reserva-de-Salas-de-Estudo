@@ -6,4 +6,7 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-module.exports = { healthRouter: router };
+// Export "router" diretamente (compatível com app.use(..., require('./health')))
+// e também como propriedade para compatibilidade com imports do tipo { healthRouter }.
+module.exports = router;
+module.exports.healthRouter = router;
